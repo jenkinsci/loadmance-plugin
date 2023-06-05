@@ -1,4 +1,4 @@
-package io.jenkins.plugins.loadmancetestbuilder.exception;
+package io.jenkins.plugins.loadmance.exception;
 
 public class LoadmanceException extends Exception {
 

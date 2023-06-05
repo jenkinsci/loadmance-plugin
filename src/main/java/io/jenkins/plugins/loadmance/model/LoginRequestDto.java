@@ -1,4 +1,4 @@
-package io.jenkins.plugins.loadmancetestbuilder.model;
+package io.jenkins.plugins.loadmance.model;
 
 import hudson.util.Secret;
 import java.io.Serializable;

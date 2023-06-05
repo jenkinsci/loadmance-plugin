@@ -1,11 +1,11 @@
-package io.jenkins.plugins.loadmancetestbuilder.model;
+package io.jenkins.plugins.loadmance.model;
 
-public class ProjectDto {
+public class TestBuilderDto {
 
   private String id;
   private String title;
 
-  public ProjectDto() {
+  public TestBuilderDto() {
   }
 
   public String getId() {

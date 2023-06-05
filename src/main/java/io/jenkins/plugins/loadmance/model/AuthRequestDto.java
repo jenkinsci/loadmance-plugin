@@ -1,6 +1,4 @@
-package io.jenkins.plugins.loadmancetestbuilder.model;
-
-import hudson.util.Secret;
+package io.jenkins.plugins.loadmance.model;
 
 public class AuthRequestDto {
   private String username;

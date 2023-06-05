@@ -1,9 +1,9 @@
-package io.jenkins.plugins.loadmancetestbuilder.utils;
+package io.jenkins.plugins.loadmance.utils;
 
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import hudson.model.Item;
 import hudson.security.ACL;
-import io.jenkins.plugins.loadmancetestbuilder.LoadmanceCredentials;
+import io.jenkins.plugins.loadmance.LoadmanceCredentials;
 import java.util.Optional;
 import org.kohsuke.stapler.Stapler;
 

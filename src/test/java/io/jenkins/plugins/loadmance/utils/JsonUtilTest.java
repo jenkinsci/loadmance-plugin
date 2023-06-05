@@ -1,8 +1,8 @@
-package io.jenkins.plugins.loadmancetestbuilder.utils;
+package io.jenkins.plugins.loadmance.utils;
 
-import io.jenkins.plugins.loadmancetestbuilder.exception.LoadmanceException;
-import io.jenkins.plugins.loadmancetestbuilder.model.AuthRequestDto;
-import io.jenkins.plugins.loadmancetestbuilder.model.LoginResponseDto;
+import io.jenkins.plugins.loadmance.exception.LoadmanceException;
+import io.jenkins.plugins.loadmance.model.AuthRequestDto;
+import io.jenkins.plugins.loadmance.model.LoginResponseDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

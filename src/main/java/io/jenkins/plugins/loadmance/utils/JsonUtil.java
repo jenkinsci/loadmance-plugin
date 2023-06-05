@@ -1,10 +1,10 @@
-package io.jenkins.plugins.loadmancetestbuilder.utils;
+package io.jenkins.plugins.loadmance.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jenkins.plugins.loadmancetestbuilder.exception.LoadmanceException;
+import io.jenkins.plugins.loadmance.exception.LoadmanceException;
 import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

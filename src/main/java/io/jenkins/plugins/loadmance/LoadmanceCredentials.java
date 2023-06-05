@@ -1,4 +1,4 @@
-package io.jenkins.plugins.loadmancetestbuilder;
+package io.jenkins.plugins.loadmance;
 
 import com.cloudbees.plugins.credentials.CredentialsScope;
 import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
@@ -7,8 +7,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
 import hudson.util.FormValidation;
 import hudson.util.Secret;
-import io.jenkins.plugins.loadmancetestbuilder.exception.LoadmanceException;
-import io.jenkins.plugins.loadmancetestbuilder.service.LoadmanceService;
+import io.jenkins.plugins.loadmance.exception.LoadmanceException;
+import io.jenkins.plugins.loadmance.service.LoadmanceService;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 

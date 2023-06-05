@@ -1,4 +1,4 @@
-package io.jenkins.plugins.loadmancetestbuilder.model;
+package io.jenkins.plugins.loadmance.model;
 
 public class TestRunDto {
 

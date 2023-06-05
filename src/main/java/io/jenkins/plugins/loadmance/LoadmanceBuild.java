@@ -1,10 +1,10 @@
-package io.jenkins.plugins.loadmancetestbuilder;
+package io.jenkins.plugins.loadmance;
 
 import hudson.model.BuildListener;
 import hudson.model.Result;
 import hudson.remoting.Callable;
-import io.jenkins.plugins.loadmancetestbuilder.model.AuthRequestDto;
-import io.jenkins.plugins.loadmancetestbuilder.service.LoadmanceService;
+import io.jenkins.plugins.loadmance.model.AuthRequestDto;
+import io.jenkins.plugins.loadmance.service.LoadmanceService;
 import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.remoting.RoleChecker;
 

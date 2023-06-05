@@ -1,4 +1,4 @@
-package io.jenkins.plugins.loadmancetestbuilder.utils;
+package io.jenkins.plugins.loadmance.utils;
 
 import java.io.IOException;
 import java.util.Properties;

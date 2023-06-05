@@ -1,4 +1,4 @@
-package io.jenkins.plugins.loadmancetestbuilder;
+package io.jenkins.plugins.loadmance;
 
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.CredentialsScope;
@@ -15,12 +15,12 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
-import io.jenkins.plugins.loadmancetestbuilder.exception.LoadmanceException;
-import io.jenkins.plugins.loadmancetestbuilder.model.AuthRequestDto;
-import io.jenkins.plugins.loadmancetestbuilder.model.ProjectDto;
-import io.jenkins.plugins.loadmancetestbuilder.model.TestBuilderDto;
-import io.jenkins.plugins.loadmancetestbuilder.service.LoadmanceService;
-import io.jenkins.plugins.loadmancetestbuilder.utils.CredentialsUtil;
+import io.jenkins.plugins.loadmance.exception.LoadmanceException;
+import io.jenkins.plugins.loadmance.model.AuthRequestDto;
+import io.jenkins.plugins.loadmance.model.ProjectDto;
+import io.jenkins.plugins.loadmance.model.TestBuilderDto;
+import io.jenkins.plugins.loadmance.service.LoadmanceService;
+import io.jenkins.plugins.loadmance.utils.CredentialsUtil;
 import java.io.IOException;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
