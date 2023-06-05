@@ -2,6 +2,7 @@ package io.jenkins.plugins.loadmance;
 
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.CredentialsScope;
+import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
 import hudson.Extension;
 import hudson.Launcher;
 import hudson.model.AbstractProject;
@@ -16,7 +17,7 @@ import hudson.tasks.Builder;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import io.jenkins.plugins.loadmance.exception.LoadmanceException;
-import io.jenkins.plugins.loadmance.model.AuthRequestDto;
+import io.jenkins.plugins.loadmance.model.LoginRequestDto;
 import io.jenkins.plugins.loadmance.model.ProjectDto;
 import io.jenkins.plugins.loadmance.model.TestBuilderDto;
 import io.jenkins.plugins.loadmance.service.LoadmanceService;
@@ -26,6 +27,7 @@ import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.Stapler;
+import org.kohsuke.stapler.interceptor.RequirePOST;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -115,8 +117,8 @@ public class LoadmanceBuilder extends Builder {
     LoadmanceBuild loadmanceBuild = new LoadmanceBuild();
     loadmanceBuild.setListener(listener);
     loadmanceBuild.setTestId(getTestId());
-    loadmanceBuild.setAuthRequestDto(new AuthRequestDto(selectedCredentials.get().getUsername(),
-        selectedCredentials.get().getPassword().getPlainText()));
+    loadmanceBuild.setLoginRequestDto(new LoginRequestDto(selectedCredentials.get().getUsername(),
+        selectedCredentials.get().getPassword()));
 
     Result result;
     try {
@@ -143,8 +145,10 @@ public class LoadmanceBuilder extends Builder {
       return "Loadmance Test Builder";
     }
 
+
+    @RequirePOST
     public ListBoxModel doFillCredentialsIdItems(@QueryParameter("credentialsId") String credentialsId) {
-      ListBoxModel items = new ListBoxModel();
+      StandardListBoxModel items = new StandardListBoxModel();
 
       Item item = Stapler.getCurrentRequest().findAncestorObject(Item.class);
 
@@ -158,6 +162,7 @@ public class LoadmanceBuilder extends Builder {
       return items;
     }
 
+    @RequirePOST
     public ListBoxModel doFillProjectIdItems(@QueryParameter("credentialsId") String credentialsId,
         @QueryParameter("projectId") String projectId) {
       if (StringUtils.isBlank(credentialsId) || credentialsId.equals("none")) {
@@ -171,8 +176,8 @@ public class LoadmanceBuilder extends Builder {
         return new ListBoxModel();
       }
 
-      LoadmanceService.INSTANCE.setAuthRequestDto(new AuthRequestDto(selectedCredentials.get().getUsername(),
-          selectedCredentials.get().getPassword().getPlainText()));
+      LoadmanceService.INSTANCE.setLoginRequestDto(new LoginRequestDto(selectedCredentials.get().getUsername(),
+          selectedCredentials.get().getPassword()));
       try {
         var projects = LoadmanceService.INSTANCE.getProjects();
         for (ProjectDto project : projects) {
@@ -186,6 +191,7 @@ public class LoadmanceBuilder extends Builder {
       return listBoxModel;
     }
 
+    @RequirePOST
     public ListBoxModel doFillTestIdItems(@QueryParameter("credentialsId") String credentialsId,
         @QueryParameter("projectId") String projectId, @QueryParameter("testId") String testId) {
       if (StringUtils.isBlank(projectId) || StringUtils.isBlank(credentialsId) || credentialsId.equals("none")) {
@@ -198,8 +204,8 @@ public class LoadmanceBuilder extends Builder {
         return new ListBoxModel();
       }
 
-      LoadmanceService.INSTANCE.setAuthRequestDto(new AuthRequestDto(selectedCredentials.get().getUsername(),
-          selectedCredentials.get().getPassword().getPlainText()));
+      LoadmanceService.INSTANCE.setLoginRequestDto(new LoginRequestDto(selectedCredentials.get().getUsername(),
+          selectedCredentials.get().getPassword()));
 
       try {
         var testBuilderDtoList = LoadmanceService.INSTANCE.getTestBuilders(projectId);

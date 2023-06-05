@@ -2,19 +2,18 @@ package io.jenkins.plugins.loadmance;
 
 import hudson.model.BuildListener;
 import hudson.model.Result;
-import hudson.remoting.Callable;
-import io.jenkins.plugins.loadmance.model.AuthRequestDto;
+import io.jenkins.plugins.loadmance.model.LoginRequestDto;
 import io.jenkins.plugins.loadmance.service.LoadmanceService;
+import jenkins.security.NotReallyRoleSensitiveCallable;
 import org.apache.commons.lang.StringUtils;
-import org.jenkinsci.remoting.RoleChecker;
 
-public class LoadmanceBuild implements Callable<Result, Exception> {
+public class LoadmanceBuild extends NotReallyRoleSensitiveCallable<Result, Exception> {
 
   private static final int TEST_RUN_CHECK_DELAY = 10000;
   private String testId;
   private BuildListener listener = null;
 
-  private AuthRequestDto authRequestDto;
+  private LoginRequestDto loginRequestDto;
 
   LoadmanceService loadmanceService = LoadmanceService.INSTANCE;
 
@@ -31,7 +30,7 @@ public class LoadmanceBuild implements Callable<Result, Exception> {
 
     try {
 
-      loadmanceService.setAuthRequestDto(authRequestDto);
+      loadmanceService.setLoginRequestDto(loginRequestDto);
 
       testRunId = loadmanceService.startTest(testId).getRunId();
 
@@ -76,10 +75,6 @@ public class LoadmanceBuild implements Callable<Result, Exception> {
     return result;
   }
 
-  @Override
-  public void checkRoles(RoleChecker checker) throws SecurityException {
-
-  }
 
   public String getTestId() {
     return testId;
@@ -93,7 +88,7 @@ public class LoadmanceBuild implements Callable<Result, Exception> {
     this.listener = listener;
   }
 
-  public void setAuthRequestDto(AuthRequestDto authRequestDto) {
-    this.authRequestDto = authRequestDto;
+  public void setLoginRequestDto(LoginRequestDto loginRequestDto) {
+    this.loginRequestDto = loginRequestDto;
   }
 }

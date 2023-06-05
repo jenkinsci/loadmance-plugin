@@ -1,8 +1,9 @@
 package io.jenkins.plugins.loadmance.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import hudson.util.Secret;
 import io.jenkins.plugins.loadmance.exception.LoadmanceException;
-import io.jenkins.plugins.loadmance.model.AuthRequestDto;
+import io.jenkins.plugins.loadmance.model.LoginRequestDto;
 import io.jenkins.plugins.loadmance.model.LoginResponseDto;
 import io.jenkins.plugins.loadmance.model.ProjectDto;
 import io.jenkins.plugins.loadmance.model.TestBuilderDto;
@@ -35,19 +36,19 @@ public enum LoadmanceService {
   private static final String HEADER_ACCEPT = "Content-Type";
   private static final String HEADER_ACCEPT_VALUE = "application/json";
   private static final String HEADER_AUTHORIZATION = "Authorization";
-  private AuthRequestDto authRequestDto;
+  private LoginRequestDto loginRequestDto;
 
-  public void setAuthRequestDto(AuthRequestDto authRequestDto) {
-    this.authRequestDto = authRequestDto;
+  public void setLoginRequestDto(LoginRequestDto loginRequestDto) {
+    this.loginRequestDto = loginRequestDto;
   }
 
-  public LoginResponseDto login(String username, String password) throws LoadmanceException {
-    this.authRequestDto = new AuthRequestDto(username, password);
+  public LoginResponseDto login(String username, Secret password) throws LoadmanceException {
+    this.loginRequestDto = new LoginRequestDto(username, password);
     return getToken();
   }
 
   public LoginResponseDto getToken() throws LoadmanceException {
-    var request = createPostRequest("auth/login", authRequestDto).build();
+    var request = createPostRequest("auth/login", loginRequestDto).build();
     try {
       var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
       if (response.statusCode() == 200) {

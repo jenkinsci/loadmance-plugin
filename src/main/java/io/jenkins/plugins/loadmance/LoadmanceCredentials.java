@@ -11,6 +11,7 @@ import io.jenkins.plugins.loadmance.exception.LoadmanceException;
 import io.jenkins.plugins.loadmance.service.LoadmanceService;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.interceptor.RequirePOST;
 
 public class LoadmanceCredentials extends BaseStandardCredentials implements StandardUsernamePasswordCredentials {
 
@@ -47,10 +48,11 @@ public class LoadmanceCredentials extends BaseStandardCredentials implements Sta
     }
 
 
+    @RequirePOST
     public FormValidation doTestConnection(@QueryParameter("username") String username,
         @QueryParameter("password") String password) {
       try {
-        var response = LoadmanceService.INSTANCE.login(username, password);
+        var response = LoadmanceService.INSTANCE.login(username, Secret.fromString(password));
         if (response == null || response.getToken() == null) {
           return FormValidation.ok("Connection error. Please check credentials");
         } else {

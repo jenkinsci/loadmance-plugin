@@ -1,21 +1,21 @@
 package io.jenkins.plugins.loadmance.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import hudson.util.Secret;
+import io.jenkins.plugins.loadmance.converter.SecretToStringSerializer;
 import java.io.Serializable;
 
 public class LoginRequestDto implements Serializable {
 
   private String username;
+
+  @JsonSerialize(using = SecretToStringSerializer.class)
   private Secret password;
 
   public LoginRequestDto(String username, Secret password) {
     this.username = username;
     this.password = password;
   }
-
-  public LoginRequestDto() {
-  }
-
 
   public String getUsername() {
     return username;
@@ -33,3 +33,4 @@ public class LoginRequestDto implements Serializable {
     this.password = password;
   }
 }
+
