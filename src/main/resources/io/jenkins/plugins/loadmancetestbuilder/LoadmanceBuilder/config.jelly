@@ -1,0 +1,17 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
+         xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <f:entry field="credentialsId" title="Credentials">
+        <f:select default="none"/>
+
+    </f:entry>
+
+    <f:entry field="projectId" title="Projects">
+        <f:select default="none"/>
+    </f:entry>
+
+    <f:entry field="testId" title="Test Builder">
+        <f:select default="none"/>
+    </f:entry>
+
+
+</j:jelly>
