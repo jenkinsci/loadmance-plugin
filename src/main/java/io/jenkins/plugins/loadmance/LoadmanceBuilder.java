@@ -75,7 +75,7 @@ public class LoadmanceBuilder extends Builder {
   @Override
   public boolean perform(Build<?, ?> build, Launcher launcher, BuildListener listener)
       throws InterruptedException, IOException {
-
+    Result result = Result.FAILURE;
     if (StringUtils.isBlank(getTestId())) {
       String message = "Test builder id is empty or not selected";
       listener.fatalError(message);
@@ -120,10 +120,12 @@ public class LoadmanceBuilder extends Builder {
     loadmanceBuild.setLoginRequestDto(new LoginRequestDto(selectedCredentials.get().getUsername(),
         selectedCredentials.get().getPassword()));
 
-    Result result;
     try {
-      result = c.call(loadmanceBuild);
+      if (c != null) {
+        result = c.call(loadmanceBuild);
+      }
     } catch (Exception e) {
+      logger.error("Call loadmance builder error", e);
       throw new RuntimeException(e);
     }
 
@@ -176,10 +178,10 @@ public class LoadmanceBuilder extends Builder {
         return new ListBoxModel();
       }
 
-      LoadmanceService.INSTANCE.setLoginRequestDto(new LoginRequestDto(selectedCredentials.get().getUsername(),
+      LoadmanceService.getInstance().updateLoginRequestDto(new LoginRequestDto(selectedCredentials.get().getUsername(),
           selectedCredentials.get().getPassword()));
       try {
-        var projects = LoadmanceService.INSTANCE.getProjects();
+        var projects = LoadmanceService.getInstance().getProjects();
         for (ProjectDto project : projects) {
           boolean selected = !StringUtils.isBlank(projectId) && projectId.equals(project.getId());
           listBoxModel.add(new ListBoxModel.Option(project.getTitle(), project.getId(), selected));
@@ -204,11 +206,11 @@ public class LoadmanceBuilder extends Builder {
         return new ListBoxModel();
       }
 
-      LoadmanceService.INSTANCE.setLoginRequestDto(new LoginRequestDto(selectedCredentials.get().getUsername(),
+      LoadmanceService.getInstance().updateLoginRequestDto(new LoginRequestDto(selectedCredentials.get().getUsername(),
           selectedCredentials.get().getPassword()));
 
       try {
-        var testBuilderDtoList = LoadmanceService.INSTANCE.getTestBuilders(projectId);
+        var testBuilderDtoList = LoadmanceService.getInstance().getTestBuilders(projectId);
 
         for (TestBuilderDto testBuilderDto : testBuilderDtoList) {
           boolean selected = !StringUtils.isBlank(testId) && testId.equals(testBuilderDto.getId());

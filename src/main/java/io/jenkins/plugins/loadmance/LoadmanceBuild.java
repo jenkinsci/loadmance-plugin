@@ -15,8 +15,6 @@ public class LoadmanceBuild extends NotReallyRoleSensitiveCallable<Result, Excep
 
   private LoginRequestDto loginRequestDto;
 
-  LoadmanceService loadmanceService = LoadmanceService.INSTANCE;
-
   @Override
   public Result call() throws Exception {
     String testRunId = null;
@@ -28,9 +26,9 @@ public class LoadmanceBuild extends NotReallyRoleSensitiveCallable<Result, Excep
       return result;
     }
 
+    LoadmanceService loadmanceService = LoadmanceService.getInstance();
     try {
-
-      loadmanceService.setLoginRequestDto(loginRequestDto);
+      loadmanceService.updateLoginRequestDto(loginRequestDto);
 
       testRunId = loadmanceService.startTest(testId).getRunId();
 
@@ -41,8 +39,12 @@ public class LoadmanceBuild extends NotReallyRoleSensitiveCallable<Result, Excep
 
         var testStatus = loadmanceService.getTestRunStatus(testRunId);
 
-        if (testStatus != null && testStatus.getStatus().equalsIgnoreCase("FINISH")) {
-          listener.getLogger().printf("%s test finish with status%n", testRunId, testStatus.getResultStatus());
+        if (testStatus == null) {
+          continue;
+        }
+
+        if (testStatus.getStatus().equalsIgnoreCase("FINISH")) {
+          listener.getLogger().printf("%s test finish with status %s n", testRunId, testStatus.getResultStatus());
           if (testStatus.getResultStatus().equalsIgnoreCase("PASS")) {
             result = Result.SUCCESS;
           } else {
@@ -61,7 +63,7 @@ public class LoadmanceBuild extends NotReallyRoleSensitiveCallable<Result, Excep
 
 
     } catch (InterruptedException e) {
-      listener.getLogger().printf("Stop by jenkins");
+      listener.getLogger().println("Stop by jenkins");
       throw new InterruptedException("Stop by jenkins");
     } catch (Exception e) {
       result = Result.NOT_BUILT;

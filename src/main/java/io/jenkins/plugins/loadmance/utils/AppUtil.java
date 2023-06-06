@@ -15,7 +15,7 @@ public enum AppUtil {
   AppUtil() {
     Properties properties = new Properties();
     try {
-      properties.load(getClass().getClassLoader().getResourceAsStream("app.properties"));
+      properties.load(getClass().getClassLoader().getResourceAsStream("io/jenkins/plugins/loadmance/app.properties"));
       baseUrl = properties.getProperty("baseUrl");
       LOGGER.debug("app.properties load complete");
     } catch (IOException e) {

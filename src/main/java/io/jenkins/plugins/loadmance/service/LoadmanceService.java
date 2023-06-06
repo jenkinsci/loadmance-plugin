@@ -24,9 +24,19 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public enum LoadmanceService {
-  INSTANCE;
+public class LoadmanceService {
 
+  private static LoadmanceService instance;
+  private static final Object lock = new Object();
+
+  public static LoadmanceService getInstance() {
+    synchronized (lock) {
+      if (instance == null) {
+        instance = new LoadmanceService();
+      }
+    }
+    return instance;
+  }
 
   private static final Logger LOGGER = LoggerFactory.getLogger(LoadmanceService.class);
   private static final HttpClient httpClient = HttpClient.newHttpClient();
@@ -38,7 +48,7 @@ public enum LoadmanceService {
   private static final String HEADER_AUTHORIZATION = "Authorization";
   private LoginRequestDto loginRequestDto;
 
-  public void setLoginRequestDto(LoginRequestDto loginRequestDto) {
+  public void updateLoginRequestDto(LoginRequestDto loginRequestDto) {
     this.loginRequestDto = loginRequestDto;
   }
 

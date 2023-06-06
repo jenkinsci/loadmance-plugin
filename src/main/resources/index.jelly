@@ -1,3 +1,4 @@
 <?jelly escape-by-default='true'?>
 <div>
+  By adding this plugin, you can run your load tests with loadmance.com.
 </div>

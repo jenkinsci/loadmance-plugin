@@ -1,2 +1,2 @@
 _extends: .github
-tag-template: demo1-$NEXT_MINOR_VERSION
+tag-template: loadmance-$NEXT_MINOR_VERSION

@@ -52,7 +52,7 @@ public class LoadmanceCredentials extends BaseStandardCredentials implements Sta
     public FormValidation doTestConnection(@QueryParameter("username") String username,
         @QueryParameter("password") String password) {
       try {
-        var response = LoadmanceService.INSTANCE.login(username, Secret.fromString(password));
+        var response = LoadmanceService.getInstance().login(username, Secret.fromString(password));
         if (response == null || response.getToken() == null) {
           return FormValidation.ok("Connection error. Please check credentials");
         } else {
