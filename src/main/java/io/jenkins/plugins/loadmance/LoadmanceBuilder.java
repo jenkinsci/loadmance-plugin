@@ -23,6 +23,7 @@ import io.jenkins.plugins.loadmance.model.TestBuilderDto;
 import io.jenkins.plugins.loadmance.service.LoadmanceService;
 import io.jenkins.plugins.loadmance.utils.CredentialsUtil;
 import java.io.IOException;
+import jenkins.tasks.SimpleBuildStep;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
@@ -31,7 +32,7 @@ import org.kohsuke.stapler.interceptor.RequirePOST;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LoadmanceBuilder extends Builder {
+public class LoadmanceBuilder extends Builder implements SimpleBuildStep {
 
   private static final Logger logger = LoggerFactory.getLogger(LoadmanceBuilder.class.getSimpleName());
 
