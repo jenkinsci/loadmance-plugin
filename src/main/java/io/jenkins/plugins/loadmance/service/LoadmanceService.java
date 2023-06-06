@@ -88,7 +88,7 @@ public class LoadmanceService {
   }
 
   public List<TestBuilderDto> getTestBuilders(String projectId) throws LoadmanceException {
-    var request = createGetRequest("test-builders?project-id" + projectId)
+    var request = createGetRequest("test-builders?project-id=" + projectId)
         .header(HEADER_AUTHORIZATION, "Bearer " + getToken().getToken())
         .build();
     try {

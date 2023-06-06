@@ -3,13 +3,19 @@ package io.jenkins.plugins.loadmance;
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.CredentialsScope;
 import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import hudson.EnvVars;
 import hudson.Extension;
+import hudson.FilePath;
 import hudson.Launcher;
+import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Build;
 import hudson.model.BuildListener;
 import hudson.model.Item;
 import hudson.model.Result;
+import hudson.model.Run;
+import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import hudson.security.ACL;
 import hudson.tasks.BuildStepDescriptor;
@@ -25,6 +31,7 @@ import io.jenkins.plugins.loadmance.utils.CredentialsUtil;
 import java.io.IOException;
 import jenkins.tasks.SimpleBuildStep;
 import org.apache.commons.lang.StringUtils;
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.Stapler;
@@ -73,32 +80,34 @@ public class LoadmanceBuilder extends Builder implements SimpleBuildStep {
     this.testId = testId;
   }
 
+
   @Override
-  public boolean perform(Build<?, ?> build, Launcher launcher, BuildListener listener)
-      throws InterruptedException, IOException {
-    Result result = Result.FAILURE;
+  public void perform(@NonNull Run<?, ?> run, @NonNull FilePath workspace, @NonNull EnvVars env,
+      @NonNull Launcher launcher, @NonNull TaskListener listener) throws InterruptedException, IOException {
+
+    Result result;
     if (StringUtils.isBlank(getTestId())) {
       String message = "Test builder id is empty or not selected";
       listener.fatalError(message);
       logger.warn(message);
-      build.setResult(Result.FAILURE);
-      return false;
+      run.setResult(Result.FAILURE);
+      return;
     }
 
     if (StringUtils.isBlank(getProjectId())) {
       String message = "Project id is empty or not selected";
       listener.fatalError(message);
       logger.warn(message);
-      build.setResult(Result.FAILURE);
-      return false;
+      run.setResult(Result.FAILURE);
+      return;
     }
 
     if (StringUtils.isBlank(getCredentialsId())) {
       String message = "Credentials id is empty or not selected";
       listener.fatalError(message);
       logger.warn(message);
-      build.setResult(Result.FAILURE);
-      return false;
+      run.setResult(Result.FAILURE);
+      return;
     }
 
     var scope = CredentialsScope.GLOBAL;
@@ -110,8 +119,7 @@ public class LoadmanceBuilder extends Builder implements SimpleBuildStep {
       String message = "Credentials not found";
       listener.fatalError(message);
       logger.warn(message);
-      build.setResult(Result.FAILURE);
-      return false;
+      run.setResult(Result.FAILURE);
     }
 
     VirtualChannel c = launcher.getChannel();
@@ -124,18 +132,23 @@ public class LoadmanceBuilder extends Builder implements SimpleBuildStep {
     try {
       if (c != null) {
         result = c.call(loadmanceBuild);
+        run.setResult(result);
       }
     } catch (Exception e) {
       logger.error("Call loadmance builder error", e);
       throw new RuntimeException(e);
     }
+    run.save();
 
-    build.setResult(result);
-    return true;
   }
 
+  @Override
+  public DescriptorImpl getDescriptor() {
+    return (DescriptorImpl) super.getDescriptor();
+  }
 
   @Extension
+  @Symbol("loadmance")
   public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
 
     @Override

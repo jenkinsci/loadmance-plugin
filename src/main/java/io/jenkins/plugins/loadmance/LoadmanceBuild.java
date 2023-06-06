@@ -1,7 +1,7 @@
 package io.jenkins.plugins.loadmance;
 
-import hudson.model.BuildListener;
 import hudson.model.Result;
+import hudson.model.TaskListener;
 import io.jenkins.plugins.loadmance.model.LoginRequestDto;
 import io.jenkins.plugins.loadmance.service.LoadmanceService;
 import jenkins.security.NotReallyRoleSensitiveCallable;
@@ -11,7 +11,7 @@ public class LoadmanceBuild extends NotReallyRoleSensitiveCallable<Result, Excep
 
   private static final int TEST_RUN_CHECK_DELAY = 10000;
   private String testId;
-  private BuildListener listener = null;
+  private TaskListener listener = null;
 
   private LoginRequestDto loginRequestDto;
 
@@ -30,7 +30,14 @@ public class LoadmanceBuild extends NotReallyRoleSensitiveCallable<Result, Excep
     try {
       loadmanceService.updateLoginRequestDto(loginRequestDto);
 
-      testRunId = loadmanceService.startTest(testId).getRunId();
+      var testRun = loadmanceService.startTest(testId);
+
+      if (testRun == null) {
+        listener.getLogger().println("Start test fail with. Please check loadmance account.");
+        return Result.FAILURE;
+      }
+
+      testRunId = testRun.getRunId();
 
       listener.getLogger().println("Start test with run id = " + testRunId);
 
@@ -86,7 +93,7 @@ public class LoadmanceBuild extends NotReallyRoleSensitiveCallable<Result, Excep
     this.testId = testId;
   }
 
-  public void setListener(BuildListener listener) {
+  public void setListener(TaskListener listener) {
     this.listener = listener;
   }
 
