@@ -27,6 +27,7 @@ import io.jenkins.plugins.loadmance.model.TestBuilderDto;
 import io.jenkins.plugins.loadmance.service.LoadmanceService;
 import io.jenkins.plugins.loadmance.utils.CredentialsUtil;
 import java.io.IOException;
+import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
 import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.Symbol;
@@ -163,11 +164,12 @@ public class LoadmanceBuilder extends Builder implements SimpleBuildStep {
     @RequirePOST
     public ListBoxModel doFillCredentialsIdItems(@AncestorInPath Item item,
         @QueryParameter("credentialsId") String credentialsId) {
-      StandardListBoxModel items = new StandardListBoxModel();
       if (item == null) {
-        return items;
+        Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+      } else {
+        item.checkAnyPermission(Item.CONFIGURE, Item.CREATE, Item.READ);
       }
-      item.checkAnyPermission(Item.CONFIGURE, Item.CREATE, Item.READ);
+      StandardListBoxModel items = new StandardListBoxModel();
 
       CredentialsProvider.lookupCredentials(LoadmanceCredentials.class, item, ACL.SYSTEM, new DomainRequirement())
           .forEach(loadmanceCredentials -> {
@@ -183,12 +185,13 @@ public class LoadmanceBuilder extends Builder implements SimpleBuildStep {
     public ListBoxModel doFillProjectIdItems(@AncestorInPath Item item,
         @QueryParameter("credentialsId") String credentialsId,
         @QueryParameter("projectId") String projectId) {
-      StandardListBoxModel result = new StandardListBoxModel();
-
       if (item == null) {
-        return result;
+        Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+      } else {
+        item.checkAnyPermission(Item.CONFIGURE, Item.CREATE, Item.READ);
       }
-      item.checkAnyPermission(Item.CONFIGURE, Item.CREATE, Item.READ);
+
+      StandardListBoxModel result = new StandardListBoxModel();
 
       if (StringUtils.isBlank(credentialsId) || credentialsId.equals("none")) {
         return result;
@@ -219,11 +222,13 @@ public class LoadmanceBuilder extends Builder implements SimpleBuildStep {
     public ListBoxModel doFillTestIdItems(@AncestorInPath Item item,
         @QueryParameter("credentialsId") String credentialsId,
         @QueryParameter("projectId") String projectId, @QueryParameter("testId") String testId) {
-      StandardListBoxModel result = new StandardListBoxModel();
       if (item == null) {
-        return result;
+        Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+      } else {
+        item.checkAnyPermission(Item.CONFIGURE, Item.CREATE, Item.READ);
       }
-      item.checkAnyPermission(Item.CONFIGURE, Item.CREATE, Item.READ);
+
+      StandardListBoxModel result = new StandardListBoxModel();
 
       if (StringUtils.isBlank(projectId) || StringUtils.isBlank(credentialsId) || credentialsId.equals("none")) {
         return result;
