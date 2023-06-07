@@ -3,15 +3,13 @@ package io.jenkins.plugins.loadmance;
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.CredentialsScope;
 import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
+import com.cloudbees.plugins.credentials.domains.DomainRequirement;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.EnvVars;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
-import hudson.model.Build;
-import hudson.model.BuildListener;
 import hudson.model.Item;
 import hudson.model.Result;
 import hudson.model.Run;
@@ -32,9 +30,9 @@ import java.io.IOException;
 import jenkins.tasks.SimpleBuildStep;
 import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.Symbol;
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.interceptor.RequirePOST;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -163,12 +161,15 @@ public class LoadmanceBuilder extends Builder implements SimpleBuildStep {
 
 
     @RequirePOST
-    public ListBoxModel doFillCredentialsIdItems(@QueryParameter("credentialsId") String credentialsId) {
+    public ListBoxModel doFillCredentialsIdItems(@AncestorInPath Item item,
+        @QueryParameter("credentialsId") String credentialsId) {
       StandardListBoxModel items = new StandardListBoxModel();
+      if (item == null) {
+        return items;
+      }
+      item.checkAnyPermission(Item.CONFIGURE, Item.CREATE, Item.READ);
 
-      Item item = Stapler.getCurrentRequest().findAncestorObject(Item.class);
-
-      CredentialsProvider.lookupCredentials(LoadmanceCredentials.class, item, ACL.SYSTEM)
+      CredentialsProvider.lookupCredentials(LoadmanceCredentials.class, item, ACL.SYSTEM, new DomainRequirement())
           .forEach(loadmanceCredentials -> {
             boolean selected =
                 !StringUtils.isBlank(credentialsId) && credentialsId.equals(loadmanceCredentials.getId());
@@ -179,17 +180,24 @@ public class LoadmanceBuilder extends Builder implements SimpleBuildStep {
     }
 
     @RequirePOST
-    public ListBoxModel doFillProjectIdItems(@QueryParameter("credentialsId") String credentialsId,
+    public ListBoxModel doFillProjectIdItems(@AncestorInPath Item item,
+        @QueryParameter("credentialsId") String credentialsId,
         @QueryParameter("projectId") String projectId) {
-      if (StringUtils.isBlank(credentialsId) || credentialsId.equals("none")) {
-        return new ListBoxModel();
-      }
-      ListBoxModel listBoxModel = new ListBoxModel();
+      StandardListBoxModel result = new StandardListBoxModel();
 
-      var selectedCredentials = CredentialsUtil.getSelected(credentialsId);
+      if (item == null) {
+        return result;
+      }
+      item.checkAnyPermission(Item.CONFIGURE, Item.CREATE, Item.READ);
+
+      if (StringUtils.isBlank(credentialsId) || credentialsId.equals("none")) {
+        return result;
+      }
+
+      var selectedCredentials = CredentialsUtil.getSelected(item, credentialsId);
 
       if (selectedCredentials.isEmpty()) {
-        return new ListBoxModel();
+        return result;
       }
 
       LoadmanceService.getInstance().updateLoginRequestDto(new LoginRequestDto(selectedCredentials.get().getUsername(),
@@ -198,26 +206,32 @@ public class LoadmanceBuilder extends Builder implements SimpleBuildStep {
         var projects = LoadmanceService.getInstance().getProjects();
         for (ProjectDto project : projects) {
           boolean selected = !StringUtils.isBlank(projectId) && projectId.equals(project.getId());
-          listBoxModel.add(new ListBoxModel.Option(project.getTitle(), project.getId(), selected));
+          result.add(new ListBoxModel.Option(project.getTitle(), project.getId(), selected));
         }
       } catch (LoadmanceException e) {
         FormValidation.error(e.getMessage());
       }
 
-      return listBoxModel;
+      return result;
     }
 
     @RequirePOST
-    public ListBoxModel doFillTestIdItems(@QueryParameter("credentialsId") String credentialsId,
+    public ListBoxModel doFillTestIdItems(@AncestorInPath Item item,
+        @QueryParameter("credentialsId") String credentialsId,
         @QueryParameter("projectId") String projectId, @QueryParameter("testId") String testId) {
-      if (StringUtils.isBlank(projectId) || StringUtils.isBlank(credentialsId) || credentialsId.equals("none")) {
-        return new ListBoxModel();
+      StandardListBoxModel result = new StandardListBoxModel();
+      if (item == null) {
+        return result;
       }
-      ListBoxModel listBoxModel = new ListBoxModel();
-      var selectedCredentials = CredentialsUtil.getSelected(credentialsId);
+      item.checkAnyPermission(Item.CONFIGURE, Item.CREATE, Item.READ);
+
+      if (StringUtils.isBlank(projectId) || StringUtils.isBlank(credentialsId) || credentialsId.equals("none")) {
+        return result;
+      }
+      var selectedCredentials = CredentialsUtil.getSelected(item, credentialsId);
 
       if (selectedCredentials.isEmpty()) {
-        return new ListBoxModel();
+        return result;
       }
 
       LoadmanceService.getInstance().updateLoginRequestDto(new LoginRequestDto(selectedCredentials.get().getUsername(),
@@ -228,14 +242,14 @@ public class LoadmanceBuilder extends Builder implements SimpleBuildStep {
 
         for (TestBuilderDto testBuilderDto : testBuilderDtoList) {
           boolean selected = !StringUtils.isBlank(testId) && testId.equals(testBuilderDto.getId());
-          listBoxModel.add(new ListBoxModel.Option(testBuilderDto.getTitle(), testBuilderDto.getId(), selected));
+          result.add(new ListBoxModel.Option(testBuilderDto.getTitle(), testBuilderDto.getId(), selected));
 
         }
       } catch (LoadmanceException e) {
         FormValidation.error(e.getMessage());
       }
 
-      return listBoxModel;
+      return result;
     }
 
 

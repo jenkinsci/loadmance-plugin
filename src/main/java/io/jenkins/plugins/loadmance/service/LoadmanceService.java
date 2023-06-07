@@ -57,6 +57,10 @@ public class LoadmanceService {
     return getToken();
   }
 
+  public String getTokenValue() throws LoadmanceException {
+    return getToken().getToken().getPlainText();
+  }
+
   public LoginResponseDto getToken() throws LoadmanceException {
     var request = createPostRequest("auth/login", loginRequestDto).build();
     try {
@@ -73,7 +77,7 @@ public class LoadmanceService {
 
   public List<ProjectDto> getProjects() throws LoadmanceException {
     var request = createGetRequest("projects/summary")
-        .header(HEADER_AUTHORIZATION, "Bearer " + getToken().getToken())
+        .header(HEADER_AUTHORIZATION, "Bearer " + getTokenValue())
         .build();
     try {
       var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
@@ -89,7 +93,7 @@ public class LoadmanceService {
 
   public List<TestBuilderDto> getTestBuilders(String projectId) throws LoadmanceException {
     var request = createGetRequest("test-builders?project-id=" + projectId)
-        .header(HEADER_AUTHORIZATION, "Bearer " + getToken().getToken())
+        .header(HEADER_AUTHORIZATION, "Bearer " + getTokenValue())
         .build();
     try {
       var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
@@ -106,7 +110,7 @@ public class LoadmanceService {
     var request = createDefaultRequest("test-runs/run?" + "test-builder-id=" + testBuilderId)
         .POST(BodyPublishers.noBody())
         .header(HEADER_CONTENT_TYPE, HEADER_CONTENT_TYPE_VALUE)
-        .header(HEADER_AUTHORIZATION, "Bearer " + getToken().getToken())
+        .header(HEADER_AUTHORIZATION, "Bearer " + getTokenValue())
         .build();
 
     try {
@@ -126,7 +130,7 @@ public class LoadmanceService {
 
   public TestRunStatusDto getTestRunStatus(String testRunId) throws LoadmanceException {
     var request = createGetRequest("test-runs/" + testRunId)
-        .header(HEADER_AUTHORIZATION, "Bearer " + getToken().getToken())
+        .header(HEADER_AUTHORIZATION, "Bearer " + getTokenValue())
         .build();
 
     try {
@@ -147,7 +151,7 @@ public class LoadmanceService {
     var request = createDefaultRequest("test-runs/stop?" + "test-run-ids=" + testRunId)
         .POST(BodyPublishers.noBody())
         .header(HEADER_CONTENT_TYPE, HEADER_CONTENT_TYPE_VALUE)
-        .header(HEADER_AUTHORIZATION, "Bearer " + getToken().getToken())
+        .header(HEADER_AUTHORIZATION, "Bearer " + getTokenValue())
         .build();
 
     try {

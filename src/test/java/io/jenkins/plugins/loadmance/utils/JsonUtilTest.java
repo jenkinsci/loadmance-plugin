@@ -13,11 +13,11 @@ class JsonUtilTest {
   public void testJsonToObject() throws LoadmanceException {
     var modelJsonData = "{\"token\" :\"dadsa\",\"expiresIn\": \"das\"}";
     LoginResponseDto expected = new LoginResponseDto();
-    expected.setToken("dadsa");
+    expected.setToken(Secret.fromString("dadsa"));
     LoginResponseDto actual = JsonUtil.jsonToObject(modelJsonData, LoginResponseDto.class);
     Assertions.assertTrue(actual != null);
     Assertions.assertEquals(LoginResponseDto.class, actual.getClass());
-    Assertions.assertTrue(actual.getToken().equals(expected.getToken()));
+    Assertions.assertTrue(actual.getToken().getPlainText().equals(expected.getToken().getPlainText()));
   }
 
   @Test

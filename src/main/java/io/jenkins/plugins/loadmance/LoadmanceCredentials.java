@@ -5,10 +5,13 @@ import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredenti
 import com.cloudbees.plugins.credentials.impl.BaseStandardCredentials;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
+import hudson.model.Item;
 import hudson.util.FormValidation;
 import hudson.util.Secret;
 import io.jenkins.plugins.loadmance.exception.LoadmanceException;
 import io.jenkins.plugins.loadmance.service.LoadmanceService;
+import jenkins.model.Jenkins;
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.interceptor.RequirePOST;
@@ -49,8 +52,16 @@ public class LoadmanceCredentials extends BaseStandardCredentials implements Sta
 
 
     @RequirePOST
-    public FormValidation doTestConnection(@QueryParameter("username") String username,
+    public FormValidation doTestConnection(@AncestorInPath Item item, @QueryParameter("username") String username,
         @QueryParameter("password") String password) {
+      if (item == null) {
+        if (!Jenkins.get().hasPermission(Jenkins.ADMINISTER)) {
+          return FormValidation.ok(); // (2)
+        }
+      } else {
+        item.checkAnyPermission(Item.CONFIGURE, Item.CREATE, Item.READ);
+      }
+
       try {
         var response = LoadmanceService.getInstance().login(username, Secret.fromString(password));
         if (response == null || response.getToken() == null) {
