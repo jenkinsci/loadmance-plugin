@@ -9,7 +9,7 @@
   </parent>
   <groupId>io.jenkins.plugins</groupId>
   <artifactId>loadmance</artifactId>
-  <version>1.0</version>
+  <version>${revision}${changelist}</version>
   <packaging>hpi</packaging>
   <name>Loadmance Plugin</name>
   <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
@@ -32,12 +32,12 @@
     <connection>scm:git:https://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
     <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
     <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
-    <tag>loadmance-1.0</tag>
+    <tag>HEAD</tag>
   </scm>
 
 
   <properties>
-    <revision>1.0</revision>
+    <revision>1.1</revision>
     <changelist>-SNAPSHOT</changelist>
     <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
     <jenkins.version>2.387.3</jenkins.version>
